@@ -163,7 +163,8 @@ button:active {
   .hero-flag,
   .week-day,
   .panel,
-  .dialog-popup {
+  .modal-overlay,
+  .modal-card {
     animation: none;
     transition: opacity 200ms ease;
     transform: none !important;
@@ -559,8 +560,8 @@ button:active {
 
 .cal-head h2,
 .agenda h2,
-.dialog-popup h3,
-.dialog-head h2 {
+.modal-card h3,
+.modal-head h2 {
   margin: 0;
   font-size: 16px;
   font-weight: 500;
@@ -1130,59 +1131,68 @@ button:active {
   color: var(--work);
 }
 
-.dialog-portal {
-  width: auto;
-  max-width: none;
-  height: auto;
-  max-height: none;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: inherit;
-}
-
-.dialog-portal:modal {
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100vw;
-  max-width: none;
-  height: 100dvh;
-  max-height: none;
   padding: 24px 16px;
-  overflow: hidden;
-}
-
-.dialog-portal::backdrop {
+  padding: max(24px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px))
+    max(24px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
   background: var(--scrim);
+  animation: modal-fade 160ms var(--ease-out);
 }
 
-.dialog-popup {
+.modal-card {
   position: relative;
-  width: min(440px, calc(100vw - 32px));
-  max-height: calc(100svh - 48px);
-  overflow: auto;
-  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  width: min(440px, 100%);
+  max-height: 100%;
   border: 1px solid var(--line);
   border-radius: 16px;
   background: var(--bg-soft);
+  color: var(--text);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     var(--shadow);
+  overflow: hidden;
+  animation: modal-pop 200ms var(--ease-out);
 }
 
-.dialog-head {
+.modal-head {
+  flex: 0 0 auto;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 8px;
+  gap: 12px;
+  padding: 18px 18px 8px;
 }
 
-.dialog-head p {
+.modal-head p {
   margin: 6px 0 0;
   color: var(--muted);
   font-size: 13px;
+}
+
+.modal-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 18px 18px;
+}
+
+@keyframes modal-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: none; }
 }
 
 .dialog-block {
@@ -1284,15 +1294,23 @@ button:active {
     gap: 16px;
   }
 
-  .dialog-portal:modal {
-    padding: 16px;
+  .modal-overlay {
+    padding: 12px;
+    padding: max(12px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px))
+      max(12px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
   }
 
-  .dialog-popup {
+  .modal-card {
     width: 100%;
     max-width: 420px;
-    max-height: calc(100dvh - 32px);
-    padding: 18px 16px calc(18px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .modal-head {
+    padding: 16px 16px 8px;
+  }
+
+  .modal-body {
+    padding: 0 16px 16px;
   }
 
   .dialog-block input[type='time'],
@@ -1309,10 +1327,6 @@ button:active {
     backdrop-filter: none;
     background: var(--header);
   }
-
-  .dialog-portal::backdrop {
-    background: var(--bg);
-  }
 }
 
 @media (prefers-contrast: more) {
@@ -1320,7 +1334,7 @@ button:active {
   .panel,
   .agenda,
   .week-day,
-  .dialog-popup {
+  .modal-card {
     border-color: var(--line-strong);
     box-shadow: var(--shadow-card);
   }
