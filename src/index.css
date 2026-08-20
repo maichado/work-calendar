@@ -1285,18 +1285,14 @@ button:active {
   }
 
   .dialog-portal:modal {
-    padding: 0;
-    align-items: stretch;
-    justify-content: stretch;
+    padding: 16px;
   }
 
   .dialog-popup {
     width: 100%;
-    max-width: none;
-    height: 100%;
-    max-height: none;
-    border-radius: 0;
-    padding: 16px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+    max-width: 420px;
+    max-height: calc(100dvh - 32px);
+    padding: 18px 16px calc(18px + env(safe-area-inset-bottom, 0px));
   }
 
   .dialog-block input[type='time'],
