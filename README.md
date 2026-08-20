@@ -2,6 +2,8 @@
 
 Página única para controlar a escala **um dia sim, um dia não**.
 
+Site: https://maichado.github.io/work-calendar/
+
 Hoje (20 de agosto de 2026) entra como **folga**. O ciclo continua a partir daí, inclusive fins de semana.
 
 ## Como usar
