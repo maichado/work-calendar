@@ -168,7 +168,12 @@ export function MonthCalendar({
             >
               <span className="cal-num">{date.getDate()}</span>
               <span className="cal-tag">
-                {isCompOff ? 'Comp.' : kind === 'work' ? 'Plantão' : 'Folga'}
+                <span className="cal-tag-full">
+                  {isCompOff ? 'Comp.' : kind === 'work' ? 'Plantão' : 'Folga'}
+                </span>
+                <span className="cal-tag-short">
+                  {isCompOff ? 'C' : kind === 'work' ? 'Pl' : 'Fg'}
+                </span>
               </span>
               {holiday ? <span className="cal-hol">Feriado</span> : null}
               {overridden && !isCompOff ? <i className="mark" aria-hidden="true" /> : null}
