@@ -35,7 +35,7 @@
     0 1px 2px rgba(0, 0, 0, 0.32),
     0 10px 28px rgba(0, 0, 0, 0.28),
     0 28px 56px rgba(0, 0, 0, 0.22);
-  --scrim: rgba(8, 14, 13, 0.52);
+  --scrim: rgba(8, 14, 13, 0.72);
   --theme-color: #0f1716;
 }
 
@@ -68,7 +68,7 @@
     0 1px 2px rgba(26, 46, 43, 0.08),
     0 12px 28px rgba(26, 46, 43, 0.1),
     0 28px 56px rgba(26, 46, 43, 0.08);
-  --scrim: rgba(26, 46, 43, 0.28);
+  --scrim: rgba(26, 46, 43, 0.55);
   --theme-color: #eef4f2;
 }
 
@@ -120,6 +120,9 @@ body {
 }
 
 #root {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
   min-height: 100svh;
 }
 
@@ -160,8 +163,7 @@ button:active {
   .hero-flag,
   .week-day,
   .panel,
-  .dialog-popup,
-  .dialog-backdrop {
+  .dialog-popup {
     animation: none;
     transition: opacity 200ms ease;
     transform: none !important;
@@ -403,7 +405,7 @@ button:active {
 .hero-meta,
 .hero-flag {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
   transition:
     opacity 240ms var(--ease-out),
     transform 240ms var(--ease-out);
@@ -440,7 +442,7 @@ button:active {
   cursor: pointer;
   text-align: left;
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
   transition:
     transform 140ms var(--ease-out),
     background-color 160ms ease,
@@ -558,7 +560,7 @@ button:active {
 .cal-head h2,
 .agenda h2,
 .dialog-popup h3,
-.dialog-head :first-child {
+.dialog-head h2 {
   margin: 0;
   font-size: 16px;
   font-weight: 500;
@@ -923,7 +925,7 @@ button:active {
 
 .panel {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
   transition:
     background-color 200ms ease,
     color 160ms ease,
@@ -1128,50 +1130,46 @@ button:active {
   color: var(--work);
 }
 
-.dialog-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  background: var(--scrim);
-  backdrop-filter: blur(8px);
-  opacity: 1;
-  transition: opacity 200ms var(--ease-out);
+.dialog-portal {
+  width: auto;
+  max-width: none;
+  height: auto;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
 }
 
-.dialog-backdrop[data-starting-style],
-.dialog-backdrop[data-ending-style] {
-  opacity: 0;
+.dialog-portal:modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  padding: 24px 16px;
+  overflow: hidden;
+}
+
+.dialog-portal::backdrop {
+  background: var(--scrim);
 }
 
 .dialog-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  z-index: 1001;
+  position: relative;
   width: min(440px, calc(100vw - 32px));
   max-height: calc(100svh - 48px);
   overflow: auto;
   padding: 18px;
+  border: 1px solid var(--line);
   border-radius: 16px;
   background: var(--bg-soft);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     var(--shadow);
-  transform: translate(-50%, -50%);
-  opacity: 1;
-  transition:
-    opacity 200ms var(--ease-out),
-    transform 200ms var(--ease-out);
-}
-
-.dialog-popup[data-starting-style],
-.dialog-popup[data-ending-style] {
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(0.96);
-}
-
-.dialog-popup[data-ending-style] {
-  transition-duration: 160ms;
 }
 
 .dialog-head {
@@ -1286,21 +1284,19 @@ button:active {
     gap: 16px;
   }
 
-  .dialog-popup {
-    top: 0;
-    left: 0;
-    width: 100%;
-    max-width: none;
-    height: 100dvh;
-    max-height: 100dvh;
-    padding: 16px 16px calc(20px + env(safe-area-inset-bottom, 0px));
-    border-radius: 0;
-    transform: none;
+  .dialog-portal:modal {
+    padding: 0;
+    align-items: stretch;
+    justify-content: stretch;
   }
 
-  .dialog-popup[data-starting-style],
-  .dialog-popup[data-ending-style] {
-    transform: translateY(12px);
+  .dialog-popup {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    border-radius: 0;
+    padding: 16px 16px calc(20px + env(safe-area-inset-bottom, 0px));
   }
 
   .dialog-block input[type='time'],
@@ -1318,8 +1314,7 @@ button:active {
     background: var(--header);
   }
 
-  .dialog-backdrop {
-    backdrop-filter: none;
+  .dialog-portal::backdrop {
     background: var(--bg);
   }
 }

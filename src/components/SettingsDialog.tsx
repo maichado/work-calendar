@@ -1,6 +1,6 @@
-import { Dialog } from '@base-ui/react/dialog'
 import { toast } from 'sonner'
-import { useRef, useState } from 'react'
+import { useId, useRef, useState, type MouseEvent } from 'react'
+import { createPortal } from 'react-dom'
 import { formatDayMonth, parseISODate, toISODate, type Kind } from '../lib/schedule'
 import {
   isPersistedSlice,
@@ -36,9 +36,24 @@ export function SettingsDialog({
   onCustomHoliday,
   onImport,
 }: Props) {
+  const dialogRef = useRef<HTMLDialogElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
+  const titleId = useId()
+  const descId = useId()
   const [holidayDate, setHolidayDate] = useState(toISODate(today))
   const [holidayName, setHolidayName] = useState('Feriado municipal')
+
+  function open() {
+    dialogRef.current?.showModal()
+  }
+
+  function close() {
+    dialogRef.current?.close()
+  }
+
+  function onBackdropClick(event: MouseEvent<HTMLDialogElement>) {
+    if (event.target === event.currentTarget) close()
+  }
 
   function exportData() {
     const blob = new Blob([JSON.stringify(snapshotStore(), null, 2)], {
@@ -72,23 +87,29 @@ export function SettingsDialog({
   }
 
   return (
-    <Dialog.Root>
-      <Dialog.Trigger className="ghost" type="button">
+    <>
+      <button className="ghost" type="button" onClick={open}>
         Ajustes
-      </Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Backdrop className="dialog-backdrop" />
-        <Dialog.Popup className="dialog-popup">
+      </button>
+      {createPortal(
+        <dialog
+          ref={dialogRef}
+          className="dialog-portal"
+          aria-labelledby={titleId}
+          aria-describedby={descId}
+          onClick={onBackdropClick}
+        >
+        <div className="dialog-popup">
           <div className="dialog-head">
             <div>
-              <Dialog.Title>Ajustes</Dialog.Title>
-              <Dialog.Description>
+              <h2 id={titleId}>Ajustes</h2>
+              <p id={descId}>
                 Escala, feriados, horário do plantão, tema e backup local.
-              </Dialog.Description>
+              </p>
             </div>
-            <Dialog.Close className="icon-btn" aria-label="Fechar">
+            <button type="button" className="icon-btn" aria-label="Fechar" onClick={close}>
               <CloseIcon />
-            </Dialog.Close>
+            </button>
           </div>
 
           <section className="dialog-block">
@@ -145,7 +166,7 @@ export function SettingsDialog({
                 />
               </label>
             </div>
-          <div className="dialog-row" style={{ marginTop: 8 }}>
+            <div className="dialog-row" style={{ marginTop: 8 }}>
               <button
                 type="button"
                 className="ghost"
@@ -263,9 +284,11 @@ export function SettingsDialog({
               }}
             />
           </section>
-        </Dialog.Popup>
-      </Dialog.Portal>
-    </Dialog.Root>
+        </div>
+      </dialog>,
+      document.body,
+      )}
+    </>
   )
 }
 
